@@ -1,0 +1,31 @@
+Pré-processamento:
+    - Carregar a imagem de entrada que contém regiões danificadas ou ausentes.
+    - Identificar as regiões danificadas na imagem.
+    - Definir uma máscara binária que indica as regiões a serem preenchidas.
+
+Inicialização:
+    - Inicializar uma imagem de saída como uma cópia da imagem de entrada.
+    - Inicializar uma fila de prioridade vazia para os pixels das bordas das regiões danificadas.
+    - Calcular a confiança inicial para cada pixel nas regiões danificadas com base em uma medida de textura.
+
+Propagação:
+    - Enquanto a fila de prioridade não estiver vazia:
+    - Remover o pixel de maior prioridade da fila.
+    - Calcular a melhor direção de propagação para o pixel selecionado com base nas confianças dos pixels vizinhos.
+    - Propagar os valores dos pixels vizinhos danificados na direção selecionada.
+    - Atualizar as confianças dos pixels afetados pela propagação.
+
+Preenchimento:
+    - Enquanto houver pixels danificados nas regiões:
+    - Selecionar o pixel danificado com maior confiança.
+    - Calcular a melhor estimativa de intensidade para o pixel selecionado com base na análise de patches similares nas regiões conhecidas.
+    - Preencher o pixel selecionado com o valor estimado.
+    - Atualizar a máscara binária e as confianças dos pixels afetados pelo preenchimento.
+
+Pós-processamento:
+    - Aplicar técnicas de suavização ou refinamento na imagem de saída para melhorar a qualidade estética e a coerência global.
+    - Realizar ajustes adicionais, se necessário, para otimizar os resultados finais.
+
+Fim do algoritmo:
+    - A imagem de saída contém as regiões danificadas preenchidas de forma coerente e esteticamente agradável.
+    - Salvar a imagem de saída.
