@@ -1,0 +1,2 @@
+# Criminisi
+Criminisi algorithm implementation
