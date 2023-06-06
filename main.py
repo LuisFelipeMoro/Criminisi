@@ -10,35 +10,41 @@ def Init ():
     return
 
 def main():
-    img = cv2.imread("Original.bmp", cv2.IMREAD_COLOR)
-    mask = cv2.imread("Mascara2.bmp", cv2.IMREAD_GRAYSCALE)
+    img = cv2.imread("elephant.bmp", cv2.IMREAD_COLOR)
+    mask = cv2.imread("elephant-mask.bmp", cv2.IMREAD_GRAYSCALE)
 
     row, col, cha = img.shape
-    mask = cv2.resize(mask.astype(np.uint8),(col, row), cv2.INTER_NEAREST)
 
     working_mask = np.copy(mask)
     working_image = np.copy(img)
 
-    i_mask = 1 - working_mask
-    rgb_i_mask = working_mask.reshape(row, col, 1).repeat(3, axis=2)
-    cv2.imwrite('resultado_rgbmascara.bmp', rgb_i_mask* 255)
-    working_image = working_image * rgb_i_mask
+    rgb_mask = cv2.merge((working_mask, working_mask, working_mask))
+    working_image = working_image * rgb_mask
+    cv2.imwrite('1-resultado_mascara.bmp', working_image* 255)
+    #Para testar como esta ocorrendo primeiramente, comente o For e execute somente o que está dentro dele
+    for i in range(1):  #Será substituido pelo while que rodara até não termos pixels brancos dentro da matriz front
 
-    cv2.imwrite('resultado_mascara.bmp', working_image* 255)
+        kernel = np.ones((5, 5), np.uint8)
+        eroded_mask = cv2.dilate(working_mask, kernel)
+        cv2.imwrite('2-resultado_erosão.bmp', eroded_mask)
 
-    front = (laplace(working_mask) > 0).astype('uint8')
+        front = (1 - working_mask) - (1 - eroded_mask)
+        cv2.imwrite('3-pixels_investigados.bmp', front)
 
-    cv2.imwrite('resultado_laplace.bmp', front* 255)
+        #Usaria a lista front para calcular as prioridades
 
-    #white_region = 1 - (working_mask * front) * 255
-    #rgb_white_region = white_region.reshape(row, col, 1).repeat(3, axis=2)
+        #Após calcular as prioridades partimos para o filtro na imagem
+        
+        #Utilizamos a working image para utilizar das vizinhanças, pois ela primeiramente ja estará com o buraco na imagem
 
-    #cv2.imwrite('resultado_whiteregion.bmp', rgb_white_region* 255)
-    #working_image *= rgb_white_region
+        #Então atualizamos a working image e a máscara como abaixo
+        working_mask = eroded_mask
+        cv2.imwrite('4-nova_mascara.bmp', working_mask)
 
-    #cv2.imwrite('resultado_parcial1.bmp', working_image* 255)
+    rgb_mask = cv2.merge((working_mask, working_mask, working_mask))
+    mock_resultado_final =  img = img * rgb_mask
+    cv2.imwrite('5-mock_final.bmp', mock_resultado_final* 255)
 
-    border_left = False
     #while border_left == True:
 
         # Identifica as bordas da máscara ( Pode ser feito com o Laplace)
